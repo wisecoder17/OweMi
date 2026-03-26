@@ -3,6 +3,7 @@ import cors from 'cors';
 import { config } from './config/env';
 
 import customerRoutes from './routes/customer.routes';
+import debtRoutes from './routes/debt.routes';
 
 const app: Application = express();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/customer', customerRoutes);
+app.use('/api/debts', debtRoutes);
 
 // Base Route
 app.get('/health', (req: Request, res: Response) => {
