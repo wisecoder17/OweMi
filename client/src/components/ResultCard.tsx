@@ -1,8 +1,8 @@
 import React from 'react';
-import { Customer } from '../types';
+import { VerifyResponse } from '../types';
 
 interface ResultCardProps {
-  customer: Customer;
+  customer: VerifyResponse;
   onContinue: () => void;
 }
 
@@ -14,7 +14,10 @@ const ResultCard: React.FC<ResultCardProps> = ({ customer, onContinue }) => {
     none: { bg: 'bg-gray-400', text: 'text-white', label: 'No History' }
   };
 
-  const { bg, label } = signalColors[customer.creditStatus.signal] || signalColors.none;
+  const creditInfo = customer.credit || { signal: 'none', score: null, summary: 'Check history manually.' };
+  const identityInfo = customer.identity || { name: 'Unknown', photoUrl: '', confirmed: false, verificationType: 'BVN', phoneMasked: '****' };
+
+  const { bg, label } = signalColors[creditInfo.signal] || signalColors.none;
 
   return (
     <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -22,11 +25,11 @@ const ResultCard: React.FC<ResultCardProps> = ({ customer, onContinue }) => {
       <div className="card flex flex-col items-center p-8 gap-4 text-center">
         <div className="relative">
           <img 
-            src={customer.photoUrl} 
-            alt={customer.name}
-            className="w-24 h-24 rounded-full border-4 border-brand-100 object-cover"
+            src={identityInfo.photoUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${identityInfo.name}`} 
+            alt={identityInfo.name}
+            className="w-24 h-24 rounded-full border-4 border-brand-100 object-cover bg-brand-50"
           />
-          {customer.identityConfirmed && (
+          {identityInfo.confirmed && (
             <div className="absolute bottom-0 right-0 bg-brand-500 text-white p-1 rounded-full border-2 border-white">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
@@ -34,8 +37,8 @@ const ResultCard: React.FC<ResultCardProps> = ({ customer, onContinue }) => {
         </div>
         
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{customer.name}</h1>
-          <p className="text-gray-500 font-medium">{customer.verificationType}: {customer.phoneMasked}</p>
+          <h1 className="text-2xl font-bold text-gray-900">{identityInfo.name}</h1>
+          <p className="text-gray-500 font-medium">{identityInfo.verificationType}: {identityInfo.phoneMasked}</p>
         </div>
 
         <div className="flex items-center gap-2 bg-brand-100 text-brand-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
@@ -52,25 +55,24 @@ const ResultCard: React.FC<ResultCardProps> = ({ customer, onContinue }) => {
         </div>
         
         <div className="p-6 flex flex-col gap-4 text-center">
-          {customer.creditStatus.score !== null && (
+          {creditInfo.score !== null && (
              <div className="flex flex-col items-center">
                 <div className="text-[48px] font-black text-brand-900 leading-none">
-                  {customer.creditStatus.score}%
+                  {creditInfo.score}%
                 </div>
                 <span className="text-gray-400 text-xs font-bold uppercase">Trust Score</span>
                 
-                {/* Visual Score Bar */}
                 <div className="w-full h-2 bg-gray-100 rounded-full mt-4 overflow-hidden max-w-[200px]">
                   <div 
                     className={`h-full ${bg} transition-all duration-1000`} 
-                    style={{ width: `${customer.creditStatus.score}%` }}
+                    style={{ width: `${creditInfo.score}%` }}
                   ></div>
                 </div>
              </div>
           )}
 
-          <p className="text-gray-700 font-medium text-base">
-            "{customer.creditStatus.summary}"
+          <p className="text-gray-700 font-medium text-base leading-relaxed">
+            "{creditInfo.summary}"
           </p>
         </div>
       </div>

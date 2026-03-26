@@ -6,7 +6,7 @@ export interface Customer {
   dob: string;
   verificationType: 'BVN' | 'NIN';
   identityConfirmed: boolean;
-  creditStatus: {
+  credit: {
     hasHistory: boolean;
     signal: 'good' | 'caution' | 'risk' | 'none';
     score: number | null;
@@ -32,7 +32,21 @@ export interface LedgerSummary {
   debts: Debt[];
 }
 
-export interface VerifyResponse extends Customer {
+export interface VerifyResponse {
   customerId: string;
+  identity: {
+    confirmed: boolean;
+    name: string;
+    photoUrl: string;
+    phoneMasked: string;
+    dob: string;
+    verificationType: 'BVN' | 'NIN';
+  };
+  credit: {
+    hasHistory: boolean;
+    signal: 'good' | 'caution' | 'risk' | 'none';
+    score: number | null;
+    summary: string;
+  };
   message: string;
 }

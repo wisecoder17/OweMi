@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ResultCard from '../components/ResultCard';
 import { debtApi } from '../lib/api';
+import { VerifyResponse } from '../types';
 
 /**
  * ResultPage handles the post-verification flow.
@@ -12,12 +13,24 @@ import { debtApi } from '../lib/api';
 export const ResultPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const customer = location.state?.customer;
+  const customer = location.state?.customer as VerifyResponse;
 
   const [step, setStep] = useState<'verdict' | 'record'>('verdict');
   const [amount, setAmount] = useState('');
   const [item, setItem] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Helper to format numeric string with commas for display
+  const formatAmountDisplay = (val: string) => {
+    const numeric = val.replace(/\D/g, '');
+    if (!numeric) return '';
+    return new Intl.NumberFormat('en-US').format(Number(numeric));
+  };
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const rawValue = e.target.value.replace(/\D/g, '');
+    setAmount(rawValue);
+  };
 
   // Safeguard if accessed without state
   if (!customer) {
@@ -68,7 +81,7 @@ export const ResultPage: React.FC = () => {
     <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-right-4 duration-300">
       <div>
         <h1 className="text-gray-900 font-bold text-2xl">Record New Credit</h1>
-        <p className="text-gray-500 font-medium">Adding credit for {customer.name}</p>
+        <p className="text-gray-500 font-medium">Adding credit for {customer.identity?.name || 'Customer'}</p>
       </div>
 
       <form onSubmit={handleRecordDebt} className="flex flex-col gap-6">
@@ -76,15 +89,15 @@ export const ResultPage: React.FC = () => {
           <label className="text-[12px] font-bold text-gray-500 uppercase tracking-widest pl-1">
             Credit Amount (₦)
           </label>
-          <input 
-            type="tel" 
-            autoFocus
-            required
-            placeholder="0.00"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value.replace(/\D/g, ''))}
-            className="w-full h-16 bg-white border-2 border-gray-100 rounded-[16px] px-5 text-3xl font-extrabold focus:border-brand-600 outline-none transition-all"
-          />
+            <input 
+              type="text" 
+              autoFocus
+              required
+              placeholder="0"
+              value={formatAmountDisplay(amount)}
+              onChange={handleAmountChange}
+              className="w-full h-16 bg-white border-2 border-gray-100 rounded-[16px] px-5 text-3xl font-extrabold focus:border-brand-600 outline-none transition-all"
+            />
         </div>
 
         <div className="flex flex-col gap-2">
