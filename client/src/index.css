@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-900: #0B3D2E;
+  --color-brand-600: #16A34A;
+  --color-brand-500: #22C55E;
+  --color-brand-100: #DCFCE7;
+  --color-status-amber: #F59E0B;
+  --color-status-red: #EF4444;
+  --color-surface: #FFFFFF;
+  --color-gray-900: #111827;
+  --color-gray-500: #6B7280;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-gray-900 font-sans text-base antialiased;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  h1 {
+    @apply text-[32px] font-bold leading-tight;
+  }
+
+  h2 {
+    @apply text-[18px] md:text-[20px] font-semibold;
+  }
+
+  label {
+    @apply text-[12px] md:text-[14px] text-gray-500 font-medium;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-brand-600 text-white font-semibold py-4 w-full rounded-[12px] min-h-[48px] text-center
+           active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-brand-600 text-brand-600 font-semibold py-4 w-full rounded-[12px] min-h-[48px] text-center
+           active:scale-[0.98] transition-all;
+  }
+
+  .card {
+    @apply bg-white border border-gray-100 p-4 rounded-[12px] shadow-sm;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border;
+  }
+
+  /* One-thumb safety: Primary CTA should be fixed at bottom for mobile mobile views */
+  .bottom-cta {
+    @apply fixed bottom-0 left-0 right-0 p-4 pb-8 bg-white border-t border-gray-100 md:relative md:border-none md:p-0;
+  }
+}
