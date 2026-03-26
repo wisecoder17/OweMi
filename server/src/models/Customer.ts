@@ -12,6 +12,7 @@ export interface ICustomer extends Document {
   identityConfirmed: boolean;
   creditStatus: {
     hasHistory: boolean;
+    signal: "good" | "caution" | "risk" | "none";
     score?: number | null;
     summary?: string;
     history?: any[];
@@ -33,6 +34,7 @@ const CustomerSchema: Schema = new Schema({
   identityConfirmed: { type: Boolean, default: false },
   creditStatus: {
     hasHistory: { type: Boolean, default: false },
+    signal: { type: String, enum: ["good", "caution", "risk", "none"], default: "none" },
     score: { type: Number, default: null },
     summary: { type: String },
     history: { type: Array, default: [] }

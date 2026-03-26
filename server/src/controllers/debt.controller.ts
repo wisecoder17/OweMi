@@ -50,12 +50,12 @@ export const debtController = {
       const { status } = req.body;
       const traderId = "60d0fe4f5311236168a109ca"; // MOCKED
 
-      if (!status || !['paid', 'overdue'].includes(status)) {
+      if (!status || !['paid', 'overdue'].includes(status as string)) {
         res.status(400).json({ message: "Valid status (paid/overdue) is required." });
         return;
       }
 
-      const debt = await debtService.updateDebtStatus(traderId, id!, status);
+      const debt = await debtService.updateDebtStatus(traderId, id as string, status as any);
       res.status(200).json(debt);
     } catch (error) {
       console.error('Debt Update Controller Error:', (error as Error).message);

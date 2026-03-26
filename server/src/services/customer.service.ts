@@ -50,7 +50,7 @@ export const customerService = {
           },
           credit: {
             hasHistory: creditData?.Status === 'Success',
-            signal: creditData?.Payload?.length > 0 ? "good" : "none",
+            signal: (creditData?.Payload?.length > 0 ? "good" : "none") as any,
             score: creditData?.Score || null,
             summary: creditData?.Summary || (creditData?.Payload?.length > 0 ? "Loans found" : "No formal credit history.")
           },
@@ -71,11 +71,11 @@ export const customerService = {
           dob: new Date(result.identity.dob),
           verificationType: "BVN",
           identityConfirmed: result.identity.confirmed,
-          creditStatus: result.credit
+          creditStatus: result.credit as any
         });
       } else {
         // Update existing customer state if needed
-        customer.creditStatus = result.credit;
+        customer.creditStatus = result.credit as any;
         customer.identityConfirmed = result.identity.confirmed;
       }
 
