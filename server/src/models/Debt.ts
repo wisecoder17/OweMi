@@ -12,13 +12,13 @@ export interface IDebt extends Document {
 }
 
 const DebtSchema: Schema = new Schema({
-  traderId: { type: Schema.Types.ObjectId, ref: 'Trader', required: true },
-  customerId: { type: Schema.Types.ObjectId, ref: 'Customer', required: true },
-  amount: { type: Number, required: true },
-  item: { type: String },
+  traderId: { type: Schema.Types.ObjectId, ref: 'Trader', required: true, index: true },
+  customerId: { type: Schema.Types.ObjectId, ref: 'Customer', required: true, index: true },
+  amount: { type: Number, required: true, min: 0 },
+  item: { type: String, trim: true },
   dueDate: { type: Date, required: true },
-  status: { type: String, enum: ["unpaid", "paid", "overdue"], default: "unpaid" },
-  recordedAt: { type: Date, default: Date.now },
+  status: { type: String, enum: ["unpaid", "paid", "overdue"], default: "unpaid", index: true },
+  recordedAt: { type: Date, default: Date.now, index: true },
   paidAt: { type: Date }
 }, { timestamps: true });
 

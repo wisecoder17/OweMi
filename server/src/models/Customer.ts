@@ -24,11 +24,11 @@ export interface ICustomer extends Document {
 
 const CustomerSchema: Schema = new Schema({
   traderId: { type: Schema.Types.ObjectId, ref: 'Trader', required: true },
-  bvn: { type: String, required: true },
-  nin: { type: String },
-  name: { type: String, required: true },
+  bvn: { type: String, required: true, trim: true },
+  nin: { type: String, trim: true },
+  name: { type: String, required: true, trim: true },
   photoUrl: { type: String },
-  phone: { type: String },
+  phone: { type: String, trim: true },
   dob: { type: Date },
   verificationType: { type: String, enum: ["BVN", "NIN"], default: "BVN" },
   identityConfirmed: { type: Boolean, default: false },
@@ -41,5 +41,8 @@ const CustomerSchema: Schema = new Schema({
   },
   owemiScore: { type: Number }
 }, { timestamps: true });
+
+// Compound index for unique verification per trader relationship (Production Safety)
+CustomerSchema.index({ traderId: 1, bvn: 1 }, { unique: true });
 
 export default mongoose.model<ICustomer>('Customer', CustomerSchema);

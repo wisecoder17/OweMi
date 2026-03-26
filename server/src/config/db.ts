@@ -1,28 +1,23 @@
 import mongoose from 'mongoose';
 import { config } from './env';
 
+/**
+ * connectDB establishes a persistent connection to the MongoDB instance 
+ * defined in your .env. This is essential for LIVE testing data persistence.
+ */
 export const connectDB = async () => {
   try {
-    let uri = config.MONGODB_URI;
+    const uri = config.MONGODB_URI;
 
-    // Optional: Auto-detect if we should use memory server for demo safety
-    if (!uri || uri.includes('localhost') || config.USE_MOCK_MODE) {
-      try {
-        const { MongoMemoryServer } = await import('mongodb-memory-server');
-        const mongoServer = await MongoMemoryServer.create();
-        uri = mongoServer.getUri();
-        console.log('Using In-Memory MongoDB for demo safety.');
-      } catch (e) {
-        console.log('Mongodb-memory-server not found, falling back to local/default URI.');
-      }
+    if (!uri) {
+      throw new Error('MONGODB_URI not found in environment variables.');
     }
 
     const conn = await mongoose.connect(uri);
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    console.log(`MongoDB Connected (PERSISTENT): ${conn.connection.host}`);
   } catch (error) {
-    console.error(`Error: ${(error as Error).message}`);
-    // For MVP/Demo: Don't exit, just log it. 
-    // Wait, let's keep it for now.
+    console.error(`Database Connection Error: ${(error as Error).message}`);
+    // Shutdown server to avoid inconsistent states during live test
     process.exit(1);
   }
 };

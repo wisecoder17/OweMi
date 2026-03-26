@@ -20,8 +20,16 @@ app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'OK', message: 'OweMi Server is running' });
 });
 
-// Placeholder for routes (Phases 3 and 7)
-// app.use('/api/customer', customerRoutes);
-// app.use('/api/debts', debtRoutes);
+// Global Error Handler
+app.use((err: any, req: Request, res: Response, next: any) => {
+  const status = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+  console.error(`[ERROR] ${req.method} ${req.url}:`, err);
+  res.status(status).json({
+    status: 'error',
+    message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
 
 export default app;
