@@ -22,8 +22,7 @@ export const debtService = {
       });
 
       await debt.save();
-
-      // Optionally we could update the customer's owemiScore here
+      console.log(`[DB] Debt saved successfully: ${debt._id} for amount ${data.amount}`);
       return debt;
     } catch (error) {
        console.error('Debt Creation Error:', (error as Error).message);
@@ -36,39 +35,45 @@ export const debtService = {
    */
   async getLedgerSummary(traderId: any) {
     try {
+      // Find all debts for this trader and populate customer info
       const debts = await Debt.find({ traderId }).populate('customerId', 'name photoUrl').sort({ recordedAt: -1 });
       
-      const summary = {
+      console.log(`[DB] Found ${debts.length} debt records for trader ${traderId}`);
+
+      const summaryObj = {
         totalOutstanding: 0,
         unpaidCount: 0,
         overdueCount: 0,
-        debts: debts.map((d: any) => {
-          // Compute status on fly or use stored status?
-          // For MVP we can compute if it's overdue
-          const isOverdue = d.status === 'unpaid' && new Date(d.dueDate) < new Date();
-          const finalStatus = isOverdue ? 'overdue' : d.status;
-
-          if (finalStatus !== 'paid') {
-            summary.totalOutstanding += d.amount;
-          }
-          if (finalStatus === 'unpaid') summary.unpaidCount++;
-          if (finalStatus === 'overdue') summary.overdueCount++;
-
-          return {
-            id: d._id,
-            customerId: (d.customerId as any)._id,
-            customerName: (d.customerId as any).name,
-            customerPhoto: (d.customerId as any).photoUrl,
-            amount: d.amount,
-            item: d.item,
-            dueDate: d.dueDate,
-            recordedAt: d.recordedAt,
-            status: finalStatus
-          };
-        })
       };
 
-      return summary;
+      const mappedDebts = debts.map((d: any) => {
+        // Compute if it's overdue on the fly
+        const isOverdue = d.status === 'unpaid' && new Date(d.dueDate) < new Date();
+        const finalStatus = isOverdue ? 'overdue' : d.status;
+
+        if (finalStatus !== 'paid') {
+          summaryObj.totalOutstanding += d.amount;
+        }
+        if (finalStatus === 'unpaid') summaryObj.unpaidCount++;
+        if (finalStatus === 'overdue') summaryObj.overdueCount++;
+
+        return {
+          id: d._id,
+          customerId: d.customerId?._id,
+          customerName: d.customerId?.name || 'Unknown',
+          customerPhoto: d.customerId?.photoUrl || '',
+          amount: d.amount,
+          item: d.item,
+          dueDate: d.dueDate,
+          recordedAt: d.recordedAt,
+          status: finalStatus
+        };
+      });
+
+      return {
+        ...summaryObj,
+        debts: mappedDebts
+      };
     } catch (error) {
        console.error('Ledger Fetch Error:', (error as Error).message);
        throw error;
@@ -82,7 +87,7 @@ export const debtService = {
     try {
       const debt = await Debt.findOneAndUpdate(
         { _id: debtId, traderId },
-        { status, paidAt: status === 'paid' ? new Date() : undefined },
+        { status, paidAt: (status === 'paid') ? new Date() : undefined },
         { new: true }
       );
 
