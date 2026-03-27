@@ -48,23 +48,30 @@ export const interswitchService = {
    * BVN Full Details Verification
    */
   async verifyBVNFullDetails(bvn: string, firstName: string = '', lastName: string = '') {
-    // Rule 5: Mock mode check from Day 1
+    // ---------------------------------------------------------
+    // MOCK MODE: Handles all demo and edge-case states
+    // ---------------------------------------------------------
     if (config.USE_MOCK_MODE) {
-      if (bvn === "11122233344")
-        return mockService.getMockVerifiedWithHistory().identity;
-      if (bvn === "33344455566")
-        return mockService.getMockVerifiedRisk().identity;
+      if (bvn === "95888168924") return mockService.getMockVerifiedWithHistory().identity;
+      if (bvn === "11122233344") return mockService.getMockVerifiedWithHistory().identity;
+      if (bvn === "22233344455") return mockService.getMockVerifiedNoHistory().identity;
+      if (bvn === "33344455566") return mockService.getMockVerifiedRisk().identity;
       if (bvn === "00000000000") return mockService.getMockFailure();
-      return mockService.getMockVerifiedNoHistory().identity;
+      // Default fallback for any other BVN in mock mode
+      return mockService.getMockVerifiedNoHistory().identity; 
     }
 
     try {
       const token = await getAccessToken();
 
-      // Confirmed endpoint + payload from Postman collection (verifyme BVN)
+      // Uses Match API - Name strictly comes from the form
       const response = await axios.post(
         `${config.INTERSWITCH.BASE_URL}/marketplace-routing/api/v1/verify/identity/bvn`,
-        { firstName, lastName, bvn },
+        { 
+          firstName, 
+          lastName, 
+          bvn 
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -108,14 +115,17 @@ export const interswitchService = {
    * Credit History API
    */
   async getCreditHistory(bvn: string) {
-    // Rule 5: Mock mode check from Day 1
+    // ---------------------------------------------------------
+    // MOCK MODE: Matches Identity states
+    // ---------------------------------------------------------
     if (config.USE_MOCK_MODE) {
-      if (bvn === "11122233344")
-        return mockService.getMockVerifiedWithHistory().credit;
-      if (bvn === "33344455566")
-        return mockService.getMockVerifiedRisk().credit;
+      if (bvn === "95888168924") return mockService.getMockVerifiedWithHistory().credit;
+      if (bvn === "11122233344") return mockService.getMockVerifiedWithHistory().credit;
+      if (bvn === "22233344455") return mockService.getMockVerifiedNoHistory().credit;
+      if (bvn === "33344455566") return mockService.getMockVerifiedRisk().credit;
       if (bvn === "00000000000") return mockService.getMockFailure();
-      return mockService.getMockVerifiedNoHistory().credit;
+      // Default fallback
+      return mockService.getMockVerifiedNoHistory().credit; 
     }
 
     try {
