@@ -52,13 +52,31 @@ export const interswitchService = {
     // MOCK MODE: Handles all demo and edge-case states
     // ---------------------------------------------------------
     if (config.USE_MOCK_MODE) {
-      if (bvn === "95888168924") return mockService.getMockVerifiedWithHistory().identity;
-      if (bvn === "11122233344") return mockService.getMockVerifiedWithHistory().identity;
-      if (bvn === "22233344455") return mockService.getMockVerifiedNoHistory().identity;
-      if (bvn === "33344455566") return mockService.getMockVerifiedRisk().identity;
+      const matchName = (expected: string) => {
+        const full = `${firstName} ${lastName}`.toLowerCase();
+        return expected.toLowerCase().split(' ').every(part => full.includes(part));
+      };
+
+      if (bvn === "95888168924") {
+        if (!matchName("Bunch Dillon")) return mockService.getMockFailure();
+        return mockService.getMockLiveHero().identity;
+      }
+      if (bvn === "11122233344") {
+        if (!matchName("John Doe")) return mockService.getMockFailure();
+        return mockService.getMockVerifiedWithHistory().identity;
+      }
+      if (bvn === "22233344455") {
+        if (!matchName("Jane Smith")) return mockService.getMockFailure();
+        return mockService.getMockVerifiedNoHistory().identity;
+      }
+      if (bvn === "33344455566") {
+        if (!matchName("Mike Jones")) return mockService.getMockFailure();
+        return mockService.getMockVerifiedRisk().identity;
+      }
       if (bvn === "00000000000") return mockService.getMockFailure();
-      // Default fallback for any other BVN in mock mode
-      return mockService.getMockVerifiedNoHistory().identity; 
+      
+      // Strict rule: If not in specific mock list, treat as invalid/unfound
+      return mockService.getMockFailure();
     }
 
     try {
@@ -124,8 +142,14 @@ export const interswitchService = {
       if (bvn === "22233344455") return mockService.getMockVerifiedNoHistory().credit;
       if (bvn === "33344455566") return mockService.getMockVerifiedRisk().credit;
       if (bvn === "00000000000") return mockService.getMockFailure();
-      // Default fallback
-      return mockService.getMockVerifiedNoHistory().credit; 
+      
+      // Default fallback for unknown BVNs in mock mode
+      return {
+        hasHistory: false,
+        signal: "none" as any,
+        score: null,
+        summary: "No formal credit history found. Identity is confirmed."
+      };
     }
 
     try {

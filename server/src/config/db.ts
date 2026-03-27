@@ -5,7 +5,13 @@ import { config } from './env';
  * connectDB establishes a persistent connection to the MongoDB instance 
  * defined in your .env. This is essential for LIVE testing data persistence.
  */
+let isConnected = false;
+
 export const connectDB = async () => {
+  if (isConnected) {
+    return;
+  }
+
   try {
     const uri = config.MONGODB_URI;
 
@@ -14,10 +20,11 @@ export const connectDB = async () => {
     }
 
     const conn = await mongoose.connect(uri);
-    console.log(`MongoDB Connected (PERSISTENT): ${conn.connection.host}`);
+    isConnected = !!(conn.connections && conn.connections[0] && conn.connections[0].readyState);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`Database Connection Error: ${(error as Error).message}`);
-    // Shutdown server to avoid inconsistent states during live test
-    process.exit(1);
+    // Do not exit in serverless environments, just rethrow
+    throw error;
   }
 };

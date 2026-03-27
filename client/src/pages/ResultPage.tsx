@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ResultCard from '../components/ResultCard';
 import { debtApi } from '../lib/api';
@@ -18,7 +18,29 @@ export const ResultPage: React.FC = () => {
   const [step, setStep] = useState<'verdict' | 'record'>('verdict');
   const [amount, setAmount] = useState('');
   const [item, setItem] = useState('');
+  
+  // Dynamic duration selector
+  const [durationValue, setDurationValue] = useState<number>(7);
+  const [durationUnit, setDurationUnit] = useState<'days' | 'weeks' | 'months'>('days');
+  
+  const [dueDate, setDueDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    return d.toISOString().split('T')[0];
+  });
+  
   const [loading, setLoading] = useState(false);
+
+  // Sync the date picker anytime the dynamic selector changes
+  useEffect(() => {
+    if (!durationValue || isNaN(durationValue)) return;
+    const d = new Date();
+    if (durationUnit === 'days') d.setDate(d.getDate() + durationValue);
+    else if (durationUnit === 'weeks') d.setDate(d.getDate() + (durationValue * 7));
+    else if (durationUnit === 'months') d.setMonth(d.getMonth() + durationValue);
+    
+    setDueDate(d.toISOString().split('T')[0]);
+  }, [durationValue, durationUnit]);
 
   // Helper to format numeric string with commas for display
   const formatAmountDisplay = (val: string) => {
@@ -48,15 +70,11 @@ export const ResultPage: React.FC = () => {
 
     setLoading(true);
     try {
-      // Default due date: 7 days from now for MVP
-      const dueDate = new Date();
-      dueDate.setDate(dueDate.getDate() + 7);
-
       await debtApi.create({
         customerId: customer.customerId,
         amount: Number(amount),
         item,
-        dueDate: dueDate.toISOString(),
+        dueDate: new Date(dueDate).toISOString(),
       });
       
       navigate('/');
@@ -111,6 +129,54 @@ export const ResultPage: React.FC = () => {
             onChange={(e) => setItem(e.target.value)}
             className="w-full h-14 bg-white border-2 border-gray-100 rounded-[16px] px-5 text-lg font-medium focus:border-brand-600 outline-none transition-all"
           />
+        </div>
+
+        {/* UNIFIED DUE DATE WIDGET (Timer Style) */}
+        <div className="flex flex-col gap-4 p-5 bg-white border-2 border-gray-100 rounded-[20px] shadow-sm">
+          {/* Main Date Display (TOP) */}
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">
+              Exact Repayment Date
+            </label>
+            <div className="relative">
+              <input 
+                type="date" 
+                required
+                value={dueDate}
+                onChange={(e) => {
+                  setDueDate(e.target.value);
+                  setDurationValue(0); 
+                }}
+                className="w-full h-14 bg-gray-50 border-none rounded-[14px] px-4 text-xl font-bold text-gray-800 outline-none transition-all appearance-none cursor-pointer focus:bg-white focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+          </div>
+
+          {/* Quick Scroll Timer (BOTTOM) */}
+          <div className="flex gap-2">
+            <input 
+              type="number" 
+              min="1"
+              value={durationValue || ''}
+              onChange={(e) => setDurationValue(Number(e.target.value))}
+              placeholder="0"
+              className="w-24 h-14 bg-gray-50 border-none rounded-[14px] px-2 font-extrabold text-2xl text-center text-gray-800 focus:bg-white focus:ring-2 focus:ring-green-500 outline-none transition-all placeholder-gray-300"
+            />
+            <div className="relative flex-1">
+              <select 
+                value={durationUnit}
+                onChange={(e) => setDurationUnit(e.target.value as any)}
+                className="w-full h-14 bg-gray-50 border-none rounded-[14px] pl-5 pr-12 font-bold text-xl text-gray-700 outline-none transition-all appearance-none cursor-pointer focus:bg-white focus:ring-2 focus:ring-green-500"
+              >
+                <option value="days">Days</option>
+                <option value="weeks">Weeks</option>
+                <option value="months">Months</option>
+              </select>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L7 8L13 1" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="p-4 bg-orange-50 rounded-[16px] border border-orange-100 flex items-start gap-3">

@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import { config } from './config/env';
+import { connectDB } from './config/db';
 
 import customerRoutes from './routes/customer.routes';
 import debtRoutes from './routes/debt.routes';
@@ -10,6 +11,16 @@ const app: Application = express();
 // Middlewares
 app.use(cors({ origin: config.CLIENT_ORIGIN }));
 app.use(express.json());
+
+// Ensure DB connection for every request (cached in connectDB)
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Routes
 app.use('/api/customer', customerRoutes);

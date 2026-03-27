@@ -9,12 +9,22 @@ import { customerApi } from '../lib/api';
 
 export const VerifyPage: React.FC = () => {
   const [bvn, setBvn] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!firstName.trim()) {
+      setError('First name is required');
+      return;
+    }
+    if (!lastName.trim()) {
+      setError('Last name is required');
+      return;
+    }
     if (bvn.length !== 11) {
       setError('BVN must be 11 digits');
       return;
@@ -24,7 +34,12 @@ export const VerifyPage: React.FC = () => {
     setError('');
 
     try {
-      const res = await customerApi.verify({ type: 'BVN', value: bvn });
+      const res = await customerApi.verify({
+        type: 'BVN',
+        value: bvn,
+        firstName,
+        lastName
+       });
       // Store result in location state for simplicity (or global state later)
       navigate('/result', { state: { customer: res.data } });
     } catch (err: any) {
@@ -45,11 +60,39 @@ export const VerifyPage: React.FC = () => {
       <form onSubmit={handleVerify} className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <label className="text-[12px] font-bold text-gray-500 uppercase tracking-widest pl-1">
+            First Name
+          </label>
+          <input
+            type="text"
+            className="w-full h-[64px] bg-gray-50 border-2 rounded-[16px] px-6 text-xl font-bold outline-none transition-all
+              border-gray-100 focus:border-brand-600 focus:bg-white"
+            placeholder="e.g. Bunch"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-[12px] font-bold text-gray-500 uppercase tracking-widest pl-1">
+            Last Name
+          </label>
+          <input
+            type="text"
+            className="w-full h-[64px] bg-gray-50 border-2 rounded-[16px] px-6 text-xl font-bold outline-none transition-all
+              border-gray-100 focus:border-brand-600 focus:bg-white"
+            placeholder="e.g. Dillon"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="text-[12px] font-bold text-gray-500 uppercase tracking-widest pl-1">
             Bank Verification Number (BVN)
           </label>
           <div className="relative">
-            <input 
-              type="tel" 
+            <input
+              type="tel"
               maxLength={11}
               value={bvn}
               onChange={(e) => setBvn(e.target.value.replace(/\D/g, ''))}
@@ -92,12 +135,13 @@ export const VerifyPage: React.FC = () => {
       {/* Quick shortcuts for Demo (Help Richard test faster) */}
       <div className="mt-auto pb-24 text-center">
          <span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Demo Shortcuts</span>
-          <div className="flex gap-2 justify-center mt-2 flex-wrap">
-             <button onClick={() => setBvn('11122233344')} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-bold">EMEK (GOOD)</button>
-             <button onClick={() => setBvn('22233344455')} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-bold">TUND (NEW)</button>
-             <button onClick={() => setBvn('33344455566')} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-bold">OBIN (RISK)</button>
-             <button onClick={() => setBvn('00000000000')} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-bold">FAIL</button>
-          </div>
+        <div className="flex gap-2 text-[10px] text-gray-400 font-mono mt-4 justify-center">
+          <button type="button" onClick={() => { setFirstName('John'); setLastName('Doe'); setBvn('11122233344'); }} className="hover:text-green-600">Good</button>
+          <button type="button" onClick={() => { setFirstName('Jane'); setLastName('Smith'); setBvn('22233344455'); }} className="hover:text-amber-500">No History</button>
+          <button type="button" onClick={() => { setFirstName('Mike'); setLastName('Jones'); setBvn('33344455566'); }} className="hover:text-red-500">Risk</button>
+          <button type="button" onClick={() => { setFirstName('Emeka'); setLastName('Obi'); setBvn('00000000000'); }} className="hover:text-red-500">Fail</button>
+          <button type="button" onClick={() => { setFirstName('Bunch'); setLastName('Dillon'); setBvn('95888168924'); }} className="hover:text-green-600">LIVE Hero</button>
+        </div>
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import Debt from '../models/Debt';
 import { config } from '../config/env';
 import { interswitchService } from './interswitch.service';
 import * as mockService from './mock.service';
+import { parseSafeDate } from '../utils/formatters';
 
 /**
  * Customer Service orchestrates identity verification and record management.
@@ -40,7 +41,7 @@ export const customerService = {
           name: result.identity.name,
           photoUrl: result.identity.photoUrl,
           phone: result.identity.phoneMasked,
-          dob: new Date(result.identity.dob),
+          dob: parseSafeDate(result.identity.dob),
           verificationType: "BVN",
           identityConfirmed: result.identity.confirmed,
           creditStatus: result.credit as any

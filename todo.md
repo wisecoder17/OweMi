@@ -43,29 +43,28 @@
 - [x] Implement `PATCH /api/debts/:id/status` (Update)
 
 ## Phase 8: Frontend Routing & Root
-- [ ] Setup React Router (`/`, `/verify`, `/result`, `/debts/:id`)
-- [ ] Setup basic API client (Axios instance)
+- [x] Setup React Router (`/`, `/verify`, `/result`, `/debts/:id`)
+- [x] Setup basic API client (Axios instance)
+- [x] Create placeholder pages for all routes
 
 ## Phase 9: Core Components
-- [ ] `TopBar`
-- [ ] `TotalOwedCard`
-- [ ] `DebtorList` & `DebtorRow`
-- [ ] `StatusBadge`
-- [ ] `VerifyInputToggle`
-- [ ] `ResultCard` (Crucial)
-- [ ] `DebtForm`
-- [ ] `EmptyLedgerState`, `LoadingState`, `Toast`
+- [x] `TopBar`
+- [x] `TotalOwedCard`
+- [x] `DebtorRow`
+- [x] `StatusBadge`
+- [x] `ResultCard` (Trust Theater)
+- [x] `EmptyLedgerState`, `LoadingState`
 
 ## Phase 10: Pages Implementation
-- [ ] `LedgerPage` (Dashboard)
-- [ ] `VerifyCustomerPage` (BVN Entry)
-- [ ] `ResultRecordDebtPage` (Verdict + Record)
-- [ ] `CollectPaymentPage` (Overdue view)
+- [x] `LedgerPage` (Dashboard)
+- [x] `VerifyPage` (Identity Check)
+- [x] `ResultPage` (Verdict + Record Debt)
+- [x] `DebtPage` (Collect Payment)
 
 ## Phase 11: Polish & Demo Safety
-- [ ] Implement Demo Seed path/data
-- [ ] Final UI/UX audit (one-thumb, high contrast)
-- [ ] Error handling review (no-history state check)
+- [x] Implement Demo Seed path/data
+- [x] Final UI/UX audit (one-thumb, high contrast)
+- [x] Error handling review (no-history state check)
 
 ## Phase 12: Final Validation
 - [ ] End-to-end flow test

@@ -19,8 +19,8 @@ export const customerController = {
         return;
       }
 
-      if (type === 'BVN' && value.length !== 11) {
-        res.status(400).json({ message: "Invalid BVN. Must be 11 digits." });
+      if (type === 'BVN' && (value.length !== 11 || !/^\d{11}$/.test(value))) {
+        res.status(400).json({ message: "Invalid BVN. Must be 11 numeric digits." });
         return;
       }
 

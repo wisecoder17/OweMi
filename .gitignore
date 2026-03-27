@@ -17,6 +17,8 @@ logs/
 # Testing
 coverage/
 /test/
+server/test/
+server/src/test/
 
 # Editor/OS
 .DS_Store
@@ -28,6 +30,7 @@ coverage/
 # Build artifacts
 *.tsbuildinfo
 
+# Local files
 plan.md
-!todo.md
 .agents/*
+todo.md
