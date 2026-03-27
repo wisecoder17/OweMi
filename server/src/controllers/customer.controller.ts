@@ -11,7 +11,7 @@ export const customerController = {
    */
   async verify(req: Request, res: Response): Promise<void> {
     try {
-      const { type, value } = req.body;
+      const { type, value, firstName, lastName } = req.body;
       const traderId = "60d0fe4f5311236168a109ca"; // MOCKED TRADER ID for MVP (no auth yet)
 
       if (!type || !value) {
@@ -24,7 +24,12 @@ export const customerController = {
         return;
       }
 
-      const result = await customerService.verifyCustomer(traderId, { type, value });
+      const result = await customerService.verifyCustomer(traderId, { 
+        type, 
+        value, 
+        firstName: firstName || '', 
+        lastName: lastName || '' 
+      });
       
       res.status(200).json(result);
     } catch (error: any) {

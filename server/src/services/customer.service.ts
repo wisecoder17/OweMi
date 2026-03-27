@@ -12,12 +12,16 @@ export const customerService = {
   /**
    * Verify Customer by BVN
    */
-  async verifyCustomer(traderId: any, input: { type: string; value: string }) {
+  async verifyCustomer(traderId: any, input: { type: string; value: string; firstName?: string; lastName?: string }) {
     try {
       let result;
 
       // Rule 16: Interswitch logic handled by interswitch.service.ts (including MOCK)
-      const identity = await interswitchService.verifyBVNFullDetails(input.value);
+      const identity = await interswitchService.verifyBVNFullDetails(
+        input.value, 
+        input.firstName || '', 
+        input.lastName || ''
+      );
       const credit = await interswitchService.getCreditHistory(input.value);
 
       result = {
