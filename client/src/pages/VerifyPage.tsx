@@ -92,10 +92,12 @@ export const VerifyPage: React.FC = () => {
       {/* Quick shortcuts for Demo (Help Richard test faster) */}
       <div className="mt-auto pb-24 text-center">
          <span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest">Demo Shortcuts</span>
-         <div className="flex gap-2 justify-center mt-2">
-            <button onClick={() => setBvn('11122233344')} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-bold">EMEK (GOOD)</button>
-            <button onClick={() => setBvn('22233344455')} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-bold">TUND (NEW)</button>
-         </div>
+          <div className="flex gap-2 justify-center mt-2 flex-wrap">
+             <button onClick={() => setBvn('11122233344')} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-bold">EMEK (GOOD)</button>
+             <button onClick={() => setBvn('22233344455')} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-bold">TUND (NEW)</button>
+             <button onClick={() => setBvn('33344455566')} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-bold">OBIN (RISK)</button>
+             <button onClick={() => setBvn('00000000000')} className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded font-bold">FAIL</button>
+          </div>
       </div>
     </div>
   );

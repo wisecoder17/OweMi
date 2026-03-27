@@ -1,4 +1,5 @@
 import Customer from '../models/Customer';
+import Debt from '../models/Debt';
 import { config } from '../config/env';
 import { interswitchService } from './interswitch.service';
 import * as mockService from './mock.service';
@@ -48,9 +49,23 @@ export const customerService = {
 
       await customer.save();
 
+      // Rule 11: Demo Scenario 3 - Existing debtor warning
+      const existingDebts = await Debt.find({ 
+        customerId: customer._id, 
+        traderId, 
+        status: { $ne: 'paid' } 
+      });
+      
+      const totalOwed = existingDebts.reduce((sum, d) => sum + d.amount, 0);
+
       return {
         ...result,
-        customerId: customer._id
+        customerId: customer._id,
+        internalLedger: {
+          isExistingDebtor: existingDebts.length > 0,
+          totalOwed,
+          debtCount: existingDebts.length
+        }
       };
     } catch (error) {
       console.error('Customer Verification Error:', (error as Error).message);

@@ -16,6 +16,7 @@ export const interswitchService = {
     // Rule 5: Mock mode check from Day 1
     if (config.USE_MOCK_MODE) {
       if (bvn === '11122233344') return mockService.getMockVerifiedWithHistory().identity;
+      if (bvn === '33344455566') return mockService.getMockVerifiedRisk().identity;
       if (bvn === '00000000000') return mockService.getMockFailure();
       return mockService.getMockVerifiedNoHistory().identity;
     }
@@ -54,6 +55,7 @@ export const interswitchService = {
     // Rule 5: Mock mode check from Day 1
     if (config.USE_MOCK_MODE) {
       if (bvn === '11122233344') return mockService.getMockVerifiedWithHistory().credit;
+      if (bvn === '33344455566') return mockService.getMockVerifiedRisk().credit;
       if (bvn === '00000000000') return mockService.getMockFailure();
       return mockService.getMockVerifiedNoHistory().credit;
     }

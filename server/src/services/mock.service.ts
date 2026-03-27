@@ -52,6 +52,24 @@ export const getMockVerifiedNoHistory = (): MockResponse => ({
   message: "Identity confirmed"
 });
 
+export const getMockVerifiedRisk = (): MockResponse => ({
+  identity: {
+    confirmed: true,
+    name: "Obinna Okafor",
+    photoUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=Obi",
+    phoneMasked: "******8888",
+    dob: "1985-11-20",
+    verificationType: "BVN"
+  },
+  credit: {
+    hasHistory: true,
+    signal: "risk",
+    score: 32,
+    summary: "3 formal loan defaults. Heavy borrower at other branches."
+  },
+  message: "Identity confirmed"
+});
+
 export const getMockFailure = () => {
   throw new Error("We couldn't find this person. Please check the BVN carefully and try again.");
 };
