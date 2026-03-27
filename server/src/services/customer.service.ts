@@ -15,48 +15,15 @@ export const customerService = {
     try {
       let result;
 
-      if (config.USE_MOCK_MODE) {
-        // Deterministic mock scenarios based on input
-        if (input.value === '11122233344') {
-          result = mockService.getMockVerifiedWithHistory();
-        } else if (input.value === '22233344455') {
-          result = mockService.getMockVerifiedNoHistory();
-        } else if (input.value === '00000000000') {
-          return mockService.getMockFailure();
-        } else {
-          // Default to No History if any other BVN is used in mock mode
-           result = mockService.getMockVerifiedNoHistory();
-        }
-      } else {
-        // REAL API CALLS
-        // Implementation notes from Phase 6:
-        // 1. Verify BVN
-        // 2. If success, try Credit History
-        // 3. Normalize responses to the product shape { identity, credit, message }
-        
-        const bvnData = await interswitchService.verifyBVNFullDetails(input.value);
-        const creditData = await interswitchService.getCreditHistory(input.value);
+      // Rule 16: Interswitch logic handled by interswitch.service.ts (including MOCK)
+      const identity = await interswitchService.verifyBVNFullDetails(input.value);
+      const credit = await interswitchService.getCreditHistory(input.value);
 
-        // Map real API results to simplified internal OweMi shape...
-        // For Sandbox demo:
-        result = {
-          identity: {
-            confirmed: true,
-            name: `${bvnData.FirstName || 'Sample'} ${bvnData.LastName || 'User'}`,
-            photoUrl: bvnData.Image || 'https://via.placeholder.com/150',
-            phoneMasked: bvnData.PhoneNumber || '******6789',
-            dob: bvnData.DOB || '1990-01-01',
-            verificationType: "BVN"
-          },
-          credit: {
-            hasHistory: creditData?.Status === 'Success',
-            signal: (creditData?.Payload?.length > 0 ? "good" : "none") as any,
-            score: creditData?.Score || null,
-            summary: creditData?.Summary || (creditData?.Payload?.length > 0 ? "Loans found" : "No formal credit history.")
-          },
-          message: "Identity confirmed"
-        };
-      }
+      result = {
+        identity,
+        credit,
+        message: "Identity confirmed"
+      };
 
       // Save/Update Customer in DB
       let customer = await Customer.findOne({ bvn: input.value, traderId });
