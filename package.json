@@ -19,7 +19,12 @@
     "url": "https://github.com/wisecoder17/OweMi/issues"
   },
   "homepage": "https://github.com/wisecoder17/OweMi#readme",
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "typescript": "^5.9.3"
   }
 }
