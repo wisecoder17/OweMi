@@ -53,5 +53,5 @@ export const getMockVerifiedNoHistory = (): MockResponse => ({
 });
 
 export const getMockFailure = () => {
-  throw new Error("Identity not found or API failure");
+  throw new Error("We couldn't find this person. Please check the BVN carefully and try again.");
 };

@@ -27,9 +27,15 @@ export const customerController = {
       const result = await customerService.verifyCustomer(traderId, { type, value });
       
       res.status(200).json(result);
-    } catch (error) {
-      console.error('Controller Error:', (error as Error).message);
-      res.status(500).json({ message: "Internal Server Error during verification", error: (error as Error).message });
+    } catch (error: any) {
+      console.error('Controller Error:', error.message);
+      
+      // Rule 16: Failure to verify should not crash the app experience. 
+      // Return 400 with the error message for the UI to display cleanly.
+      res.status(400).json({ 
+        status: 'fail', 
+        message: error.message || "Identity verification failed" 
+      });
     }
   }
 };

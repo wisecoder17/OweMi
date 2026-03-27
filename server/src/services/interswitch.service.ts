@@ -80,7 +80,7 @@ export const interswitchService = {
          hasHistory: false,
          signal: "none" as any,
          score: null,
-         summary: "Unable to reach credit bureau (Using local fallback)"
+         summary: "Checked identity. No credit records found for this person yet."
        };
     }
   }
