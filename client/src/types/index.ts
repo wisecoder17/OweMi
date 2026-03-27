@@ -49,4 +49,9 @@ export interface VerifyResponse {
     summary: string;
   };
   message: string;
+  internalLedger: {
+    isExistingDebtor: boolean;
+    totalOwed: number;
+    debtCount: number;
+  };
 }
